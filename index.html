@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palaparambil Stores | Supermarket in Viyoor, Thrissur</title>
+    <meta name="description" content="Your Trusted Family Supermarket in Viyoor, Thrissur. Fresh groceries, fruits, vegetables, and wholesale supplies.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for high-quality SVG icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js for 3D visual ambient backgrounds -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2E7D32', // Emerald green
+                        accent: '#FF9800',  // Warm sunset orange
+                        darkGray: '#222222'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .page { display: none; }
+        .page.active { display: block; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
+        /* Smooth transition properties */
+        .transition-all-300 {
+            transition: all 300ms ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-darkGray font-sans leading-relaxed">
+
+    <!-- TOP NOTIFICATION & HOTLINE HEADER BAR (Layout element matching structure in super markt.png) -->
+    <div class="bg-primary text-white text-xs md:text-sm py-2 px-4 flex justify-between items-center z-50 relative border-b border-green-800">
+        <div class="flex items-center gap-4">
+            <span><i class="fas fa-map-marker-alt text-accent"></i> Viyoor, Thrissur</span>
+            <span class="hidden sm:inline"><i class="fas fa-clock text-accent"></i> Open Daily: 7:00 AM - 9:30 PM</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="tel:+917559920665" class="hover:text-accent font-bold transition flex items-center gap-1">
+                <i class="fas fa-phone-alt"></i> <span class="hidden xs:inline">Call Us:</span> +91 7559920665
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN INTERACTIVE NAVIGATION BAR -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <a href="#" onclick="showPage('home')" class="text-xl md:text-2xl font-black text-primary flex items-center gap-2">
+                    <span class="bg-primary text-white p-2 rounded-lg text-sm md:text-lg flex items-center justify-center">
+                        <i class="fas fa-shopping-basket text-accent"></i>
+                    </span>
+                    <span class="tracking-tight">Palaparambil <span class="text-accent">Stores</span></span>
+                </a>
+                <p class="text-[10px] md:text-xs text-gray-500 font-medium tracking-wide uppercase mt-0.5">Your Trusted Family Supermarket</p>
+            </div>
+            
+            <!-- Desktop Navigation Menu (Visible on lg screens and above) -->
+            <div class="hidden lg:flex space-x-6 font-semibold text-gray-700">
+                <button onclick="showPage('home')" class="hover:text-primary transition-all-300 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary hover:after:w-full after:transition-all">Home</button>
+                <button onclick="showPage('about')" class="hover:text-primary transition-all-300 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary hover:after:w-full after:transition-all">About Us</button>
+                <button onclick="showPage('services')" class="hover:text-primary transition-all-300 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary hover:after:w-full after:transition-all">Our Services</button>
+                <button onclick="showPage('wholesale')" class="hover:text-primary transition-all-300 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary hover:after:w-full after:transition-all">Wholesale & Bulk</button>
+                <button onclick="showPage('gallery')" class="hover:text-primary transition-all-300 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary hover:after:w-full after:transition-all">Gallery</button>
+                <button onclick="showPage('contact')" class="hover:text-primary transition-all-300 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary hover:after:w-full after:transition-all">Contact Us</button>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="https://wa.me/917559920665?text=Hello%20Palaparambil%20Stores,%20I%20would%20like%20to%20place%20an%20order." target="_blank" class="hidden sm:flex bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-700 items-center gap-2 transition-all shadow-md hover:shadow-lg">
+                    <i class="fab fa-whatsapp text-lg"></i> Order Now
+                </a>
+
+                <!-- HAMBURGER BUTTON (Visible on touch devices and screen widths < 1024px) -->
+                <button id="mobile-menu-btn" aria-label="Toggle Navigation Menu" class="lg:hidden text-gray-700 hover:text-primary focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-all">
+                    <i id="hamburger-icon" class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MOBILE INTERACTIVE NAVIGATION DRAWER (Expands smoothly on demand) -->
+        <div id="mobile-dropdown" class="hidden lg:hidden bg-white border-t border-gray-100 shadow-xl divide-y divide-gray-50">
+            <div class="px-4 py-3 space-y-2">
+                <button onclick="navigateAndClose('home')" class="flex items-center gap-3 w-full text-left font-semibold text-gray-700 hover:text-primary py-3 px-3 rounded-lg hover:bg-green-50 transition-all">
+                    <i class="fas fa-home text-primary w-5"></i> Home
+                </button>
+                <button onclick="navigateAndClose('about')" class="flex items-center gap-3 w-full text-left font-semibold text-gray-700 hover:text-primary py-3 px-3 rounded-lg hover:bg-green-50 transition-all">
+                    <i class="fas fa-info-circle text-primary w-5"></i> About Us
+                </button>
+                <button onclick="navigateAndClose('services')" class="flex items-center gap-3 w-full text-left font-semibold text-gray-700 hover:text-primary py-3 px-3 rounded-lg hover:bg-green-50 transition-all">
+                    <i class="fas fa-concierge-bell text-primary w-5"></i> Our Services
+                </button>
+                <button onclick="navigateAndClose('wholesale')" class="flex items-center gap-3 w-full text-left font-semibold text-gray-700 hover:text-primary py-3 px-3 rounded-lg hover:bg-green-50 transition-all">
+                    <i class="fas fa-boxes text-primary w-5"></i> Wholesale & Bulk
+                </button>
+                <button onclick="navigateAndClose('gallery')" class="flex items-center gap-3 w-full text-left font-semibold text-gray-700 hover:text-primary py-3 px-3 rounded-lg hover:bg-green-50 transition-all">
+                    <i class="fas fa-images text-primary w-5"></i> Gallery
+                </button>
+                <button onclick="navigateAndClose('contact')" class="flex items-center gap-3 w-full text-left font-semibold text-gray-700 hover:text-primary py-3 px-3 rounded-lg hover:bg-green-50 transition-all">
+                    <i class="fas fa-address-book text-primary w-5"></i> Contact Us
+                </button>
+                
+                <div class="pt-4 pb-2 px-3">
+                    <a href="https://wa.me/917559920665?text=Hello%20Palaparambil%20Stores,%20I%20would%20like%20to%20place%20an%20order." target="_blank" class="flex justify-center bg-emerald-600 text-white py-3 rounded-xl font-bold text-center items-center gap-2 transition-all shadow-md">
+                        <i class="fab fa-whatsapp text-lg"></i> Order on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO GRAPHICS BANNER -->
+    <div class="relative bg-gradient-to-br from-green-50 via-white to-orange-50 overflow-hidden min-h-[550px] flex items-center border-b border-gray-100">
+        <!-- Three.js Canvas Root Container -->
+        <div id="canvas-container"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 py-12 md:py-20 relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-7">
+                <span class="inline-flex items-center gap-1.5 bg-green-100 text-primary text-xs font-bold uppercase px-3 py-1.5 rounded-full mb-4">
+                    <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
+                    Serving Viyoor & Thrissur
+                </span>
+                
+                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+                    Welcome to <br><span class="text-primary bg-clip-text">Palaparambil Stores</span>
+                </h1>
+                
+                <p class="text-gray-600 mt-6 text-base md:text-lg max-w-xl">
+                    Serving Viyoor and Thrissur with quality groceries, fresh vegetables, fruits, household essentials, and wholesale supplies. Whether you are shopping for your home or planning a wedding, catering event, hospital, or institution, we're here to provide quality products at competitive prices.
+                </p>
+
+                <!-- Core Bullet Badges -->
+                <div class="mt-6 flex flex-wrap gap-2 text-xs font-bold text-primary">
+                    <span class="bg-white px-3 py-2 rounded-xl shadow-sm border border-green-100 flex items-center gap-1.5">🥬 Fresh Groceries</span>
+                    <span class="bg-white px-3 py-2 rounded-xl shadow-sm border border-green-100 flex items-center gap-1.5">📦 Wholesale Supplies</span>
+                    <span class="bg-white px-3 py-2 rounded-xl shadow-sm border border-green-100 flex items-center gap-1.5">🚚 Home Delivery</span>
+                    <span class="bg-white px-3 py-2 rounded-xl shadow-sm border border-green-100 flex items-center gap-1.5">💍 Wedding Orders</span>
+                </div>
+
+                <!-- Strategic Contact Actions Call Out (As requested) -->
+                <div class="mt-8 flex flex-col sm:flex-row flex-wrap gap-4">
+                    <a href="https://wa.me/917559920665?text=Hello%20Palaparambil%20Stores,%20I%20would%20like%20to%20place%20an%20order." target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-300">
+                        <i class="fab fa-whatsapp text-lg animate-bounce"></i> Order on WhatsApp
+                    </a>
+                    <a href="https://maps.google.com/?q=Palaparambil+Stores+Viyoor+Thrissur" target="_blank" class="bg-white text-gray-800 border border-gray-200 px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md hover:bg-gray-50 transition duration-300">
+                        <i class="fas fa-map-marked-alt text-primary text-lg"></i> Get Directions
+                    </a>
+                    <a href="tel:+917559920665" class="bg-accent hover:bg-orange-600 text-white px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-300">
+                        <i class="fas fa-phone-alt"></i> Call Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hero Promo Grid Panels (Reflecting layout design values from super markt.png) -->
+            <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-primary hover:-translate-y-1 transition duration-300">
+                    <div class="text-3xl mb-3">🚚</div>
+                    <h3 class="font-bold text-gray-900 text-base">Free Delivery</h3>
+                    <p class="text-xs text-gray-500 mt-2">Free within 3 km radius for orders above ₹1,000.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-md border-t-4 border-accent hover:-translate-y-1 transition duration-300">
+                    <div class="text-3xl mb-3">🍎</div>
+                    <h3 class="font-bold text-gray-900 text-base">Daily Fresh Farm</h3>
+                    <p class="text-xs text-gray-500 mt-2">Vegetables and fruits sourced freshly every morning.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-md border-l-4 border-orange-500 sm:col-span-2 hover:-translate-y-1 transition duration-300">
+                    <div class="flex items-start gap-4">
+                        <div class="text-3xl mt-1">📦</div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 text-base">Wholesale Rates Everyday</h3>
+                            <p class="text-xs text-gray-500 mt-1">Specialized bulk rate options structured explicitly for catering businesses, hospitals, and wedding planners.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 1: HOME PAGE ================= -->
+    <main id="page-home" class="page active max-w-7xl mx-auto px-4 py-12">
+        <!-- Store Offer Announcement Banner (Inspired by promotional banners of super markt.png) -->
+        <div class="bg-gradient-to-r from-emerald-800 to-green-700 text-white rounded-2xl p-6 md:p-8 mb-16 flex flex-col md:flex-row justify-between items-center gap-6 shadow-lg">
+            <div>
+                <span class="bg-accent text-white text-xs font-black uppercase px-2.5 py-1 rounded">Promo Offer</span>
+                <h3 class="text-2xl font-bold mt-2">Get Fresh Vegetables & Groceries Delivered Today!</h3>
+                <p class="text-green-100 text-sm mt-1">Order on WhatsApp and get instant response within minutes.</p>
+            </div>
+            <a href="https://wa.me/917559920665?text=Hello%20Palaparambil%20Stores,%20I%20would%20like%20to%20place%20an%20order." target="_blank" class="bg-white text-primary font-bold px-6 py-3 rounded-xl shadow-md hover:bg-gray-100 transition duration-200 shrink-0 flex items-center gap-2">
+                <i class="fab fa-whatsapp text-lg"></i> Send Order Form
+            </a>
+        </div>
+
+        <!-- Featured Collections Categories -->
+        <div class="text-center max-w-2xl mx-auto mb-10">
+            <h2 class="text-3xl font-extrabold text-gray-900">Explore Fresh Categories</h2>
+            <p class="text-gray-500 mt-2">A handpicked collection of high-quality ingredients sourced local & fresh.</p>
+        </div>
+
+        <!-- Category Circle Row (Visual layout from super markt.png) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 mb-16">
+            <div class="bg-white p-4 rounded-2xl text-center shadow-sm hover:shadow-md border border-gray-100 transition duration-300">
+                <div class="w-16 h-16 bg-green-50 text-primary rounded-full flex items-center justify-center mx-auto text-3xl mb-3">🥬</div>
+                <h4 class="font-bold text-sm">Vegetables</h4>
+            </div>
+            <div class="bg-white p-4 rounded-2xl text-center shadow-sm hover:shadow-md border border-gray-100 transition duration-300">
+                <div class="w-16 h-16 bg-orange-50 text-accent rounded-full flex items-center justify-center mx-auto text-3xl mb-3">🍎</div>
+                <h4 class="font-bold text-sm">Fresh Fruits</h4>
+            </div>
+            <div class="bg-white p-4 rounded-2xl text-center shadow-sm hover:shadow-md border border-gray-100 transition duration-300">
+                <div class="w-16 h-16 bg-emerald-50 text-green-700 rounded-full flex items-center justify-center mx-auto text-3xl mb-3">🛒</div>
+                <h4 class="font-bold text-sm">Daily Groceries</h4>
+            </div>
+            <div class="bg-white p-4 rounded-2xl text-center shadow-sm hover:shadow-md border border-gray-100 transition duration-300">
+                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto text-3xl mb-3">🥛</div>
+                <h4 class="font-bold text-sm">Dairy Products</h4>
+            </div>
+            <div class="bg-white p-4 rounded-2xl text-center shadow-sm hover:shadow-md border border-gray-100 transition duration-300">
+                <div class="w-16 h-16 bg-amber-50 text-amber-700 rounded-full flex items-center justify-center mx-auto text-3xl mb-3">🍚</div>
+                <h4 class="font-bold text-sm">Rice & Grains</h4>
+            </div>
+            <div class="bg-white p-4 rounded-2xl text-center shadow-sm hover:shadow-md border border-gray-100 transition duration-300">
+                <div class="w-16 h-16 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center mx-auto text-3xl mb-3">🧴</div>
+                <h4 class="font-bold text-sm">Household</h4>
+            </div>
+        </div>
+
+        <!-- Why Choose Us Panel Section -->
+        <div class="bg-white border border-gray-200 rounded-3xl p-8 md:p-12 mb-16 shadow-sm">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-3xl font-extrabold text-gray-900 leading-tight">Why Choose Palaparambil Stores?</h3>
+                    <p class="text-gray-600 mt-4">For years, we have been the benchmark of customer satisfaction and price convenience in Viyoor. Here is why local businesses and families trust us with their provisions list:</p>
+                    <div class="mt-6 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-green-600 bg-green-50 p-2.5 rounded-xl"><i class="fas fa-check"></i></span>
+                            <span class="font-bold text-gray-800">Fresh Stock Delivered Daily</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-green-600 bg-green-50 p-2.5 rounded-xl"><i class="fas fa-check"></i></span>
+                            <span class="font-bold text-gray-800">Competitive Wholesales Margins & Rates</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-green-600 bg-green-50 p-2.5 rounded-xl"><i class="fas fa-check"></i></span>
+                            <span class="font-bold text-gray-800">Reliable Quick Delivery within Viyoor</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-green-600 bg-green-50 p-2.5 rounded-xl"><i class="fas fa-check"></i></span>
+                            <span class="font-bold text-gray-800">Honest Pricing, Zero Hidden Rates</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" alt="Palaparambil Store Front" class="rounded-2xl shadow-lg w-full object-cover aspect-[4/3]" onerror="this.src='https://placehold.co/600x450/2E7D32/ffffff?text=Palaparambil+Stores'">
+                    <div class="absolute -bottom-6 -right-6 bg-accent text-white p-6 rounded-2xl shadow-xl hidden sm:block">
+                        <p class="text-3xl font-black">100%</p>
+                        <p class="text-xs font-bold uppercase tracking-wider">Trusted local shop</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Valued Client Profiles section -->
+        <div class="text-center mb-10">
+            <h3 class="text-2xl font-bold text-gray-900">Proudly Sourcing & Serving</h3>
+            <p class="text-gray-500 text-sm mt-1">Our regular bulk institutional customers who count on us.</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4 text-sm font-semibold text-gray-700 mb-8">
+            <span class="bg-white border border-gray-100 px-5 py-3 rounded-full shadow-sm"><i class="fas fa-users text-primary mr-2"></i> Local Families</span>
+            <span class="bg-white border border-gray-100 px-5 py-3 rounded-full shadow-sm"><i class="fas fa-hospital text-primary mr-2"></i> Hospitals</span>
+            <span class="bg-white border border-gray-100 px-5 py-3 rounded-full shadow-sm"><i class="fas fa-fire-extinguisher text-primary mr-2"></i> Kerala Fire Force</span>
+            <span class="bg-white border border-gray-100 px-5 py-3 rounded-full shadow-sm"><i class="fas fa-concierge-bell text-primary mr-2"></i> Catering Services</span>
+            <span class="bg-white border border-gray-100 px-5 py-3 rounded-full shadow-sm"><i class="fas fa-glass-cheers text-primary mr-2"></i> Wedding Planners</span>
+            <span class="bg-white border border-gray-100 px-5 py-3 rounded-full shadow-sm"><i class="fas fa-utensils text-primary mr-2"></i> Restaurants</span>
+        </div>
+    </main>
+
+
+    <!-- ================= PAGE 2: ABOUT US ================= -->
+    <main id="page-about" class="page max-w-4xl mx-auto px-4 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-extrabold text-gray-900">About Palaparambil Stores</h2>
+            <div class="w-16 h-1 bg-primary mx-auto mt-4 rounded"></div>
+        </div>
+        
+        <div class="prose prose-lg text-gray-700 space-y-6">
+            <p class="text-lg">
+                <strong>Palaparambil Stores</strong> is a highly trusted and dependable neighbourhood family supermarket situated near the <strong>Viyoor Bus Stand</strong> in the heart of Thrissur, Kerala. 
+            </p>
+            <p>
+                Having served our community for decades, we have continuously customized our services around honesty, reliable service, competitive pricing structures, and excellent product sourcing networks. We pride ourselves on operating as both a premium grocery retailer and a key wholesale distributor.
+            </p>
+            
+            <div class="my-10 p-8 bg-green-50 border-l-4 border-primary rounded-xl">
+                <h4 class="font-bold text-primary text-lg mb-2">Our Promise to Families & Chefs</h4>
+                <p class="text-gray-700 italic m-0">"From everyday cooking provisions to high-volume commercial needs, we ensure everything we pack meets strict parameters of quality and fresh standards before delivery."</p>
+            </div>
+
+            <p>
+                Whether you need to quickly stock up your household pantry or require robust bulk logistics coordination for large catering tasks, our staff ensures quick support, friendly attention to detail, and rapid delivery.
+            </p>
+        </div>
+    </main>
+
+
+    <!-- ================= PAGE 3: SERVICES ================= -->
+    <main id="page-services" class="page max-w-7xl mx-auto px-4 py-16">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h2 class="text-4xl font-extrabold text-gray-900">Our Comprehensive Store Offerings</h2>
+            <p class="text-gray-500 mt-2">Explore the premium services and retail arrays available to you.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div class="text-3xl text-primary mb-4"><i class="fas fa-carrot"></i></div>
+                <h3 class="font-bold text-xl mb-2">Fresh Produce Counter</h3>
+                <p class="text-gray-600 text-sm">Crisp, farm-fresh vegetables and seasonal local fruits handpicked and organized daily for flavor and nutrition.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div class="text-3xl text-primary mb-4"><i class="fas fa-cookie-bite"></i></div>
+                <h3 class="font-bold text-xl mb-2">Daily Kitchen Essentials</h3>
+                <p class="text-gray-600 text-sm">Top-tier grains, rices, spices, pulses, flours, oils, and general packaged groceries from trusted brands.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div class="text-3xl text-primary mb-4"><i class="fas fa-shampoo"></i></div>
+                <h3 class="font-bold text-xl mb-2">Household & Hygiene</h3>
+                <p class="text-gray-600 text-sm">Essential cleaning materials, household utility tools, laundry supplies, and hygiene products for your home.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div class="text-3xl text-primary mb-4"><i class="fas fa-truck-loading"></i></div>
+                <h3 class="font-bold text-xl mb-2">Bulk Institutional Supply</h3>
+                <p class="text-gray-600 text-sm">Custom logistics contracts, dedicated delivery pipelines, and wholesale prices for schools, hospitals, and local offices.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div class="text-3xl text-primary mb-4"><i class="fas fa-ring"></i></div>
+                <h3 class="font-bold text-xl mb-2">Wedding & Event Supply</h3>
+                <p class="text-gray-600 text-sm">Comprehensive bulk groceries and catering supplies meticulously packaged and dispatched to match your celebration schedules.</p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div class="text-3xl text-primary mb-4"><i class="fab fa-whatsapp"></i></div>
+                <h3 class="font-bold text-xl mb-2">Instant WhatsApp Delivery</h3>
+                <p class="text-gray-600 text-sm">Text us your list on WhatsApp. We pack carefully and deliver straight to your door if you are within 3 km.</p>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- ================= PAGE 4: WHOLESALE & BULK ================= -->
+    <main id="page-wholesale" class="page max-w-7xl mx-auto px-4 py-16">
+        <div class="bg-gradient-to-br from-orange-500 to-amber-600 text-white rounded-3xl p-8 md:p-12 mb-16 shadow-lg">
+            <h2 class="text-3xl md:text-5xl font-black">Wholesale Logistics Specialists</h2>
+            <p class="mt-4 text-orange-50 max-w-2xl text-base md:text-lg">Are you hosting a large ceremony, managing a clinic, running catering teams, or managing restaurant kitchens? Let us handle your raw inventory needs seamlessly with competitive pricing and timed dispatches.</p>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mb-8 text-center">We Specialize in Supplying:</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
+                <span class="text-2xl text-accent"><i class="fas fa-gopuram"></i></span>
+                <div>
+                    <h4 class="font-bold text-gray-900">Wedding Functions</h4>
+                    <p class="text-xs text-gray-500 mt-1">Grains, premium oils, fresh vegetables, and wedding provisions delivered on schedule.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
+                <span class="text-2xl text-accent"><i class="fas fa-utensils"></i></span>
+                <div>
+                    <h4 class="font-bold text-gray-900">Catering Services</h4>
+                    <p class="text-xs text-gray-500 mt-1">High-volume packaging of basic provisions and spices to power busy event kitchens.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
+                <span class="text-2xl text-accent"><i class="fas fa-hospital"></i></span>
+                <div>
+                    <h4 class="font-bold text-gray-900">Hospitals & Clinics</h4>
+                    <p class="text-xs text-gray-500 mt-1">Hygienic daily groceries, standard provisions, and dairy products for staff and inpatient catering.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
+                <span class="text-2xl text-accent"><i class="fas fa-hotel"></i></span>
+                <div>
+                    <h4 class="font-bold text-gray-900">Hostels & Hotels</h4>
+                    <p class="text-xs text-gray-500 mt-1">Reliable, monthly contract-based deliveries ensuring consistent kitchen setups.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
+                <span class="text-2xl text-accent"><i class="fas fa-building"></i></span>
+                <div>
+                    <h4 class="font-bold text-gray-900">Government Institutions</h4>
+                    <p class="text-xs text-gray-500 mt-1">Reliable service for civil operations, defense staff offices, and security departments.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
+                <span class="text-2xl text-accent"><i class="fas fa-store"></i></span>
+                <div>
+                    <h4 class="font-bold text-gray-900">Local Retail Shops</h4>
+                    <p class="text-xs text-gray-500 mt-1">Competitive wholesale margins for local mini-provisions merchants.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- ================= PAGE 5: GALLERY ================= -->
+    <main id="page-gallery" class="page max-w-7xl mx-auto px-4 py-16">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-4xl font-extrabold text-gray-900">Our Visual Store Gallery</h2>
+            <p class="text-gray-500 mt-2">Take a look at our fresh stocks, store sections, and dependable delivery fleets.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
+                <div class="aspect-[4/3] rounded-xl overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" alt="Store Front" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <p class="font-bold text-gray-800 text-sm mt-3 px-2">Store Front</p>
+                <p class="text-xs text-gray-500 px-2 pb-2">Located on Kodungallur-Shornur Road, near Viyoor Bus Stand.</p>
+            </div>
+
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
+                <div class="aspect-[4/3] rounded-xl overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=80" alt="Grocery Section" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <p class="font-bold text-gray-800 text-sm mt-3 px-2">Grocery Section</p>
+                <p class="text-xs text-gray-500 px-2 pb-2">A comprehensive selection of daily essential provisions.</p>
+            </div>
+
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
+                <div class="aspect-[4/3] rounded-xl overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1543083477-4f785ae82425?auto=format&fit=crop&w=600&q=80" alt="Vegetable Section" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <p class="font-bold text-gray-800 text-sm mt-3 px-2">Vegetable Section</p>
+                <p class="text-xs text-gray-500 px-2 pb-2">Fresh local farm vegetables sorted daily.</p>
+            </div>
+
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
+                <div class="aspect-[4/3] rounded-xl overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1610832958506-ee5633619144?auto=format&fit=crop&w=600&q=80" alt="Fruits Section" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <p class="font-bold text-gray-800 text-sm mt-3 px-2">Fruits Section</p>
+                <p class="text-xs text-gray-500 px-2 pb-2">Fresh and sweet local fruits for your family.</p>
+            </div>
+
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
+                <div class="aspect-[4/3] rounded-xl overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80" alt="Bulk Orders" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <p class="font-bold text-gray-800 text-sm mt-3 px-2">Bulk Orders</p>
+                <p class="text-xs text-gray-500 px-2 pb-2">Safe, high-volume packing for weddings and catering.</p>
+            </div>
+
+            <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
+                <div class="aspect-[4/3] rounded-xl overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1549194388-f61be84a6e9e?auto=format&fit=crop&w=600&q=80" alt="Delivery Vehicle" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+                <p class="font-bold text-gray-800 text-sm mt-3 px-2">Delivery Vehicle</p>
+                <p class="text-xs text-gray-500 px-2 pb-2">Fast and reliable deliveries straight to your doorstep.</p>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- ================= PAGE 6: CONTACT & REVIEWS ================= -->
+    <main id="page-contact" class="page max-w-7xl mx-auto px-4 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">Contact Us</h2>
+                
+                <!-- Business Info Block -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-6">
+                    <div class="flex gap-4">
+                        <span class="text-2xl text-primary mt-1"><i class="fas fa-map-marker-alt"></i></span>
+                        <div>
+                            <h4 class="font-bold text-gray-900">Our Store Address</h4>
+                            <p class="text-gray-600 text-sm mt-1">
+                                <strong>Palaparambil Stores</strong><br>
+                                Near Viyoor Bus Stand, Kodungallur–Shornur Road<br>
+                                Viyoor, Thrissur – 680010, Kerala, India
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="text-2xl text-primary mt-1"><i class="fas fa-phone-alt"></i></span>
+                        <div>
+                            <h4 class="font-bold text-gray-900">Direct Calling Hotline</h4>
+                            <p class="text-sm mt-1">
+                                <a href="tel:+917559920665" class="text-primary font-bold hover:underline">+91 7559920665</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="text-2xl text-emerald-600 mt-1"><i class="fab fa-whatsapp"></i></span>
+                        <div>
+                            <h4 class="font-bold text-gray-900">WhatsApp Ordering</h4>
+                            <p class="text-gray-600 text-sm mt-1">Ready for home deliveries inside 3 km radius.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Reviews Display -->
+                <div class="mt-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                    <h3 class="font-bold text-gray-900 text-xl mb-4">Customer Reviews</h3>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="bg-amber-100 text-amber-700 font-extrabold px-3 py-1.5 rounded-lg text-lg">3.7 / 5</div>
+                        <div>
+                            <div class="text-amber-500 text-sm">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i>
+                            </div>
+                            <span class="text-xs text-gray-500">(Google Business Profile reviews)</span>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-50 pt-4 space-y-4">
+                        <div class="text-sm">
+                            <p class="text-gray-700 italic">"Highly dependable store near Viyoor. Great wholesale pricing on large bags of rice and provisions for marriages."</p>
+                            <span class="text-xs font-bold text-gray-500 mt-2 block">- Krishna Das V.</span>
+                        </div>
+                        <div class="text-sm">
+                            <p class="text-gray-700 italic">"Very friendly support. WhatsApp order setup saves a lot of time on weekends. Fresh greens delivered perfectly."</p>
+                            <span class="text-xs font-bold text-gray-500 mt-2 block">- Anitha Menon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Map Wrapper -->
+            <div class="flex flex-col h-full justify-between">
+                <div class="bg-white rounded-3xl overflow-hidden h-[450px] shadow-sm border border-gray-100 relative mb-4">
+                    <!-- Standardized generic safe openmaps/google embed template -->
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.0287714856034!2d76.2198059!3d10.5398288!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba7f2010bf4a16b%3A0xe67dbd394a1122a6!2sPalaparambil%20stores!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                    </iframe>
+                </div>
+                <a href="https://maps.google.com/?q=Palaparambil+stores+Viyoor" target="_blank" class="w-full text-center bg-primary text-white py-4 rounded-2xl font-bold shadow-md hover:bg-green-700 transition">
+                    <i class="fas fa-map-marked-alt mr-2"></i> Launch Inside Google Maps App
+                </a>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- FOOTER MODULE -->
+    <footer class="bg-zinc-950 text-gray-400 mt-20 pt-16 pb-8 border-t border-zinc-900">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div class="md:col-span-2">
+                <h4 class="text-white font-bold text-xl mb-3">Palaparambil Stores</h4>
+                <p class="text-sm max-w-sm">Your highly trusted neighborhood supermarket in Viyoor. Serving daily grocery selections, fresh local vegetables, fruits, and reliable wholesale packages for your family celebrations.</p>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Store Sitemap</h4>
+                <div class="flex flex-col space-y-2 text-sm">
+                    <button onclick="navigateAndClose('home')" class="text-left hover:text-white transition">Home</button>
+                    <button onclick="navigateAndClose('about')" class="text-left hover:text-white transition">About Us</button>
+                    <button onclick="navigateAndClose('services')" class="text-left hover:text-white transition">Our Services</button>
+                    <button onclick="navigateAndClose('wholesale')" class="text-left hover:text-white transition">Wholesale Hub</button>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Assistance</h4>
+                <p class="text-xs mb-3">Need delivery or custom quotes for your next catering function?</p>
+                <a href="tel:+917559920665" class="text-accent font-bold text-base hover:underline block"><i class="fas fa-phone-alt"></i> +91 7559920665</a>
+                <a href="https://wa.me/917559920665" class="text-emerald-500 font-bold text-sm hover:underline block mt-1"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 pt-8 border-t border-zinc-900 text-center text-xs text-gray-600">
+            &copy; 2026 Palaparambil Stores. All rights reserved. Located near Viyoor Bus Stand, Thrissur.
+        </div>
+    </footer>
+
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/917559920665?text=Hello%20Palaparambil%20Stores,%20I%20would%20like%20to%20place%20an%20order." 
+       target="_blank" 
+       class="fixed bottom-6 right-6 bg-emerald-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:bg-emerald-700 transform hover:scale-110 transition duration-300 z-50 text-2xl"
+       title="Order on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+
+    <script>
+        // CLIENT-SIDE ROUTER & MOBILE MENU DRAWER CONTROLLER
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileDropdown = document.getElementById('mobile-dropdown');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+
+        // Toggle state drawer
+        function toggleMobileMenu() {
+            mobileDropdown.classList.toggle('hidden');
+            if (mobileDropdown.classList.contains('hidden')) {
+                hamburgerIcon.classList.remove('fa-times');
+                hamburgerIcon.classList.add('fa-bars');
+            } else {
+                hamburgerIcon.classList.remove('fa-bars');
+                hamburgerIcon.classList.add('fa-times');
+            }
+        }
+
+        // Click handler to toggle the navigation menu
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        // Core single page routing transition logic
+        function showPage(pageId) {
+            // Hide all pages in scope
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show requested page framework
+            const target = document.getElementById('page-' + pageId);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Specialized navigation helper for mobile screens (navigates and then automatically closes the menu drawer)
+        function navigateAndClose(pageId) {
+            showPage(pageId);
+            // Close mobile menu drawer if open
+            if (!mobileDropdown.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        }
+
+        // INITIALIZING 3D LEAF AMBIENT GRAPHICS SYSTEM
+        const container = document.getElementById('canvas-container');
+        if (container) {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Create geometric elements simulating standard natural elements (floating 3D wireframe leaves)
+            const geometry = new THREE.IcosahedronGeometry(0.35, 0);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x2E7D32, 
+                wireframe: true, 
+                transparent: true, 
+                opacity: 0.12
+            });
+
+            const meshArray = [];
+            for (let i = 0; i < 15; i++) {
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.x = (Math.random() - 0.5) * 8;
+                mesh.position.y = (Math.random() - 0.5) * 5;
+                mesh.position.z = (Math.random() - 0.5) * 5;
+                
+                const randomScale = Math.random() * 0.8 + 0.3;
+                mesh.scale.set(randomScale, randomScale, randomScale);
+                
+                scene.add(mesh);
+                meshArray.push(mesh);
+            }
+
+            camera.position.z = 5;
+
+            function runRenderFrame() {
+                requestAnimationFrame(runRenderFrame);
+                
+                meshArray.forEach((m, idx) => {
+                    m.rotation.x += 0.002 + (idx * 0.0002);
+                    m.rotation.y += 0.003;
+                    // Natural slow floating rise/fall movement
+                    m.position.y += Math.sin(Date.now() * 0.001 + idx) * 0.0015;
+                });
+
+                renderer.render(scene, camera);
+            }
+            runRenderFrame();
+
+            // Handle browser resizing to update canvas layout aspect ratios
+            window.addEventListener('resize', () => {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                renderer.setSize(w, h);
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+            });
+        }
+    </script>
+</body>
+</html>
